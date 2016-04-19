@@ -117,12 +117,6 @@ def record(serial_connection, fp, verbose=False):
             previous_entry = entry
         except KeyboardInterrupt:
             break
-        except ValueError:
-            # The timer's millis() function probably overflowed or something
-            print("Laptimer's millis() overflowed.", file=sys.stderr)
-            print('You should probably turn it off and turn it on again...', 
-                    file=sys.stderr)
-            raise RuntimeError from ValueError
 
 
 
