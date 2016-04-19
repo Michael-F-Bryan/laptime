@@ -1,5 +1,7 @@
 from io import StringIO
+import sys
 from unittest import TestCase
+from unittest.mock import patch
 import re
 import random
 import time
@@ -26,6 +28,11 @@ class DummyArduino:
             return output
         else:
             return b'%d\n' % (0,)
+
+
+class OverflowedArduino(DummyArduino):
+    def readline(self):
+        return b'%d\n' % (-21,)
 
 
 class FilenameGeneratorTest(TestCase):
@@ -59,8 +66,18 @@ class RecordTest(TestCase):
     def test_record(self):
         record(self.ser, self.fp)
 
-        print()
-        print(self.fp.getvalue())
+    def test_overflowing_arduino(self):
+        # Patch stderr so it doesn't spam the user
+        with self.assertRaises(RuntimeError), patch('sys.stderr', callable=StringIO):
+            record(OverflowedArduino(), self.fp)
+
+    def test_verbose_output(self):
+        with patch('sys.stderr', callable=StringIO) as mock_stderr:
+            record(self.ser, self.fp, verbose=True)
+            calls = mock_stderr.method_calls
+
+            # Check we got the correct number of calls
+            self.assertEqual(len(calls), (1 + self.ser.max_count)*2)
 
 
 class HumanReadableTest(TestCase):

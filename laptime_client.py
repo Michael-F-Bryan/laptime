@@ -42,9 +42,8 @@ def generate_filename(base='track_times', timestamp_format=None):
 
     return name
 
-
-def human_readable(millis):
-    """
+def human_readable(millis): 
+    """ 
     Take a number of milliseconds and turn it into a string with the format
     "min:sec.millis".
     """
@@ -60,7 +59,7 @@ def human_readable(millis):
     return '{}:{}.{}'.format(minutes, seconds, int(ms))
     
 
-def record(serial_connection, fp):
+def record(serial_connection, fp, verbose=False):
     """
     Read in a line from the serial connection and write a timestamp plus
     the data to a csv file. 
@@ -88,7 +87,12 @@ def record(serial_connection, fp):
         
     # Create a writer object
     writer = csv.writer(fp)
-    writer.writerow(['Timestamp', 'Millis', 'Laptime', 'Human Readable'])
+
+    row = ['Timestamp', 'Millis', 'Laptime', 'Human Readable']
+    writer.writerow(row)
+
+    if verbose:
+        print(', '.join(row), file=sys.stderr)
     
     previous_entry = 0
     while True:
@@ -106,13 +110,18 @@ def record(serial_connection, fp):
             row = [datetime.now(), entry, duration, human_readable(duration)]
             writer.writerow(row)
 
+            if verbose:
+                row[0] = row[0].strftime('%x %X')
+                print(', '.join(str(cell) for cell in row), file=sys.stderr)
+
             previous_entry = entry
         except KeyboardInterrupt:
             break
         except ValueError:
             # The timer's millis() function probably overflowed or something
-            print("Laptimer's millis() overflowed.")
-            print('You should probably turn it off and turn it on again...')
+            print("Laptimer's millis() overflowed.", file=sys.stderr)
+            print('You should probably turn it off and turn it on again...', 
+                    file=sys.stderr)
             raise RuntimeError from ValueError
 
 
@@ -123,6 +132,8 @@ def main():
             help='The serial port to listen on (default: COM1)')
     parser.add_argument('-o', '--output-file', dest='out', type=str,
             help='The basename of your output file (default: "track_times")')
+    parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
+            help='Print recorded results to stderr as they are received')
 
     args = parser.parse_args()
 
@@ -142,7 +153,7 @@ def main():
 
     # Start the actual recording
     with open(output_file, 'w') as fp:
-        record(ser, fp)
+        record(ser, fp, verbose=args.verbose)
     
 
 if __name__ == '__main__':
