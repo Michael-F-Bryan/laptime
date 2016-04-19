@@ -1,6 +1,7 @@
 import csv
 from datetime import datetime
 import sys
+import argparse
 
 try:
     from serial import Serial
@@ -74,16 +75,33 @@ def record(serial_connection, fp):
 
 
 def main():
-    # Set up the serial connection
-    serial_port = '/dev/ttyUSB0'  # 'COM1' for Windows
-    output_file = generate_filename()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--port', dest='port', type=str,
+            help='The serial port to listen on (default: COM1)')
+    parser.add_argument('-o', '--output-file', dest='out', type=str,
+            help='The basename of your output file (default: "track_times")')
+
+    args = parser.parse_args()
+
+    if args.port:
+        serial_port = args.port
+    else:
+        serial_port = 'COM1'  
+        
+    if args.out:
+        output_file = generate_filename(base=args.out)
+    else:
+        output_file = generate_filename()
 
     ser = Serial(serial_port, baudrate=19600, timeout=1)
 
-    write(ser, 'stuff.csv')
+    # Start the actual recording
+    with open(output_file, 'w') as fp:
+        record(ser, fp)
     
 
 if __name__ == '__main__':
     # This line is here so that you can import the file without
     # executing it.
     main()
+
