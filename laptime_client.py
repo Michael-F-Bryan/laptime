@@ -35,20 +35,38 @@ def generate_filename(base='track_times', timestamp_format=None):
     if timestamp_format is None:
         timestamp_format = '%Y-%m-%d_%H%M'
     time_stamp = datetime.now().strftime(timestamp_format)
-    return '{}_{}.csv'.format(base, time_stamp)
 
+    name = '{}_{}.csv'.format(base, time_stamp)
+    if '/' in name:
+        raise ValueError('Invalid filename: {}'.format(name))
+
+    return name
+
+
+def human_readable(millis):
+    """
+    Take a number of milliseconds and turn it into a string "min:sec.millis"
+    """
+    seconds, ms = divmod(millis, 1000)
+    minutes, seconds = divmod(seconds, 60)
+
+    return '{}:{}.{}'.format(minutes, seconds, int(ms))
+    
 
 def record(serial_connection, fp):
     """
     Read in a line from the serial connection and write a timestamp plus
-    the data to a csv file. Each line from the serial connection is 
-    written as a new row in the csv.
+    the data to a csv file. 
+    
+    Each line from the serial connection is written as a new row in the csv. 
+    If the time outputted by the arduino is 0 at any time, then stop the 
+    recording.
     
     Note
     ----
     The recorder assumes that your serial connection will be giving times 
-    delimited by a newline character ('\n').
-    
+    delimited by a newline character ('\n').     
+
     Parameters
     ----------
     serial_connection: serial.Serial
@@ -63,13 +81,25 @@ def record(serial_connection, fp):
         
     # Create a writer object
     writer = csv.writer(fp)
+    writer.writerow(['Timestamp', 'Millis', 'Laptime', 'Human Readable'])
     
+    previous_entry = 0
     while True:
         # Wrap it in a try-except that will catch when the user
         # hits <ctrl-C> and break out of the while loop
         try:
             entry = serial_connection.readline()
-            writer.write(datetime.now(), entry)
+            entry = int(entry)
+
+            # Let us stop recording when we want (useful for testing)
+            if entry == 0:
+                break
+
+            duration = entry - previous_entry
+            row = [datetime.now(), entry, duration, human_readable(duration)]
+            writer.writerow(row)
+
+            previous_entry = entry
         except KeyboardInterrupt:
             break
 
@@ -93,7 +123,9 @@ def main():
     else:
         output_file = generate_filename()
 
-    ser = Serial(serial_port, baudrate=19600, timeout=1)
+    # Set the timeout to be some stupidly huge number so the program will
+    # Just block until it receives another entry from the arduino
+    ser = Serial(serial_port, baudrate=19600, timeout=100000)
 
     # Start the actual recording
     with open(output_file, 'w') as fp:
