@@ -45,8 +45,15 @@ def generate_filename(base='track_times', timestamp_format=None):
 
 def human_readable(millis):
     """
-    Take a number of milliseconds and turn it into a string "min:sec.millis"
+    Take a number of milliseconds and turn it into a string with the format
+    "min:sec.millis".
     """
+    if not isinstance(millis, int):
+        raise TypeError('millis must be a positive integer')
+
+    if millis < 0:
+        raise ValueError('millis must be a positive integer')
+
     seconds, ms = divmod(millis, 1000)
     minutes, seconds = divmod(seconds, 60)
 
@@ -102,6 +109,12 @@ def record(serial_connection, fp):
             previous_entry = entry
         except KeyboardInterrupt:
             break
+        except ValueError:
+            # The timer's millis() function probably overflowed or something
+            print("Laptimer's millis() overflowed.")
+            print('You should probably turn it off and turn it on again...')
+            raise RuntimeError from ValueError
+
 
 
 def main():

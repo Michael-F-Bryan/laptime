@@ -61,7 +61,6 @@ class RecordTest(TestCase):
 
         print()
         print(self.fp.getvalue())
-        print()
 
 
 class HumanReadableTest(TestCase):
@@ -80,7 +79,14 @@ class HumanReadableTest(TestCase):
         stuff = human_readable(num_ms)
         self.assertEqual(stuff, '5:5.657')
 
-    # def test_a_couple_ms(self):
-    #     num_ms = 124
-    #     stuff = human_readable(num_ms)
-    #     self.assertEqual(stuff, '0:0.124')
+    def test_invalid_number(self):
+        num_ms = -3
+        
+        with self.assertRaises(ValueError):
+            stuff = human_readable(num_ms)
+
+    def test_invalid_type(self):
+        num_ms = 'stuff'
+        
+        with self.assertRaises(TypeError):
+            stuff = human_readable(num_ms)
