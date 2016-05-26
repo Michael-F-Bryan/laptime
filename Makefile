@@ -10,10 +10,14 @@ tag:
 	git tag -a "$(next_tag)" -m "version $(next_tag)"
 	git push && git push --tags
 
+
 test:
+	py.test
+
+coverage:
 	coverage run -m pytest
 	coverage html
 	firefox coverage_report/index.html
 
-.PHONY: test
+.PHONY: test coverage tag
 
