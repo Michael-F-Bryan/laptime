@@ -6,7 +6,8 @@ import re
 import random
 import time
 
-from laptime.reader import generate_filename, record, human_readable
+from laptime.reader import record
+from laptime.misc import generate_filename, human_readable
 
 
 class DummyArduino:

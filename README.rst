@@ -1,15 +1,26 @@
 =======
-laptime
+Laptime
 =======
 
+.. image::
+https://travis-ci.org/Michael-F-Bryan/laptime_client.svg?branch=master
+    :target: https://travis-ci.org/Michael-F-Bryan/laptime_client
 
-Add a short description here!
+.. Tag number
+.. image:: https://img.shields.io/github/tag/Michael-F-Bryan/mfb_utils.svg?maxAge=2592000
+
+.. License
+.. image:: https://img.shields.io/github/license/Michael-F-Bryan/mfb_utils.svg?maxAge=2592000
+
+
+A client for CMT's laptimer.
 
 
 Description
 ===========
 
-A LONGER DESCRIPTION OF YOUR PROJECT GOES HERE...
+This application will receive a "millis" time from an arduino via a serial
+port, calculate the corresponding laptime, and then write it to a file.
 
 
 Note
