@@ -30,6 +30,7 @@ htmlcov/*
 .tox
 junit.xml
 coverage.xml
+coverage_report/*
 
 # Build and docs folder/files
 build/*
@@ -39,3 +40,4 @@ docs/api/*
 docs/_build/*
 cover/*
 MANIFEST
+
