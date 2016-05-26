@@ -25,15 +25,15 @@ class DummyArduino:
         if self.counter < self.max_count:
             self.counter += 1
             self.current_num += random.randint(30*1000, 250*1000)
-            output = b'%d\n' % (self.current_num,)
+            output = str(self.current_num).encode('ascii') + b'\n'
             return output
         else:
-            return b'%d\n' % (0,)
+            return str(0).encode('ascii') + b'\n'
 
 
 class OverflowedArduino(DummyArduino):
     def readline(self):
-        return bytearray(-21) + b'\n'
+        return str(-21).encode('ascii') + b'\n'
 
 
 class FilenameGeneratorTest(TestCase):
@@ -69,7 +69,7 @@ class RecordTest(TestCase):
 
     def test_overflowing_arduino(self):
         # Patch stderr so it doesn't spam the user
-        with self.assertRaises(RuntimeError), patch('sys.stderr', callable=StringIO):
+        with self.assertRaises(ValueError), patch('sys.stderr', callable=StringIO):
             record(OverflowedArduino(), self.fp)
 
     def test_verbose_output(self):

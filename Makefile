@@ -13,6 +13,9 @@ tag:
 test:
 	py.test
 
+# Alias for test
+tests: test
+
 coverage:
 	coverage run -m pytest
 	coverage html
