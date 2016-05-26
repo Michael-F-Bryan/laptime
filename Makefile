@@ -7,6 +7,7 @@ endef
 
 tag:
 	@git diff-index --quiet HEAD -- || (printf "Please commit your changes first.\n\n"; exit 1)
+	@echo "New version: $(next_tag)"
 	git tag -a "$(next_tag)" -m "version $(next_tag)"
 	git push && git push --tags
 
