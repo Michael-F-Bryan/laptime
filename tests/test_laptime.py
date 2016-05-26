@@ -33,7 +33,7 @@ class DummyArduino:
 
 class OverflowedArduino(DummyArduino):
     def readline(self):
-        return b'%d\n' % (-21,)
+        return bytearray(-21) + b'\n'
 
 
 class FilenameGeneratorTest(TestCase):

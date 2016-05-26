@@ -26,8 +26,6 @@ port, calculate the corresponding laptime, and then write it to a file.
 Note
 ====
 
-Assumptions
-===========
 The laptime client assumes that it will be reading bytes over a serial port. In
 particular, it expects that the bytes provided will be integers, delimited by a
 newline character ("\n"). 
