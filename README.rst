@@ -3,8 +3,8 @@ Laptime
 =======
 
 .. The travis.ci shield
-.. image:: https://travis-ci.org/Michael-F-Bryan/laptime_client.svg?branch=master
-    :target: https://travis-ci.org/Michael-F-Bryan/laptime_client
+.. image:: https://travis-ci.org/Michael-F-Bryan/laptime.svg?branch=master
+    :target: https://travis-ci.org/Michael-F-Bryan/laptime
 
 .. Tag number
 .. image:: https://img.shields.io/github/tag/Michael-F-Bryan/mfb_utils.svg?maxAge=2592000
