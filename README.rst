@@ -1,47 +1,19 @@
-Laptime Client README
-=====================
-
-A program for recording laptimes from an arduino and then saving them to a 
-csv file.
-
-Installing
-==========
-To use this program, you will need to first clone the git repository::
-    git clone https://github.com/Michael-F-Bryan/laptime_client.git
-
-Then install the dependencies using pip::
-    pip install pyserial
+=======
+laptime
+=======
 
 
-Usage
-=====
+Add a short description here!
 
-.. note::
-    This program was designed for using Python 3. It should still work on
-    Python 2.x, but considering Python 2.7.0 was released over 6 years ago you
-    should probably consider upgrading anyway...
 
-By running `python laptime_client.py -h`, you are shown the following output::
+Description
+===========
 
-    usage: laptime_client.py [-h] [-p PORT] [-o OUT] [-v]
+A LONGER DESCRIPTION OF YOUR PROJECT GOES HERE...
 
-    optional arguments:
-    -h, --help            show this help message and exit
-    -p PORT, --port PORT  The serial port to listen on (default: COM1)
-    -o OUT, --output-file OUT
-                            The basename of your output file (default:
-                            "track_times")
-    -v, --verbose         Print recorded results to stderr as they are received
-    
-Often, running the laptime client is as simple as ::
 
-    python laptime_client.py
-
-If you are having problems finding your serial port, then the pyserial library
-includes a neat tool::
-
-    python -m serial.tools.list_ports
-
+Note
+====
 
 Assumptions
 ===========
