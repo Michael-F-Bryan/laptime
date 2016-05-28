@@ -5,7 +5,6 @@ next_version = $(shell \
 	awk -F "." '{patch = $$3 + 1; print($$1 "." $$2 "." patch) }' )
 
 
-
 tag:
 	@git diff-index --quiet HEAD -- || (printf 'Please commit your changes first.\n\n'; exit 1)
 	@echo New version: $(next_version)

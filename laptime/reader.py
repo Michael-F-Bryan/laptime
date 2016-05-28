@@ -1,10 +1,61 @@
 import csv
+import logging
 from datetime import datetime
 import sys
 import argparse
+from collections import deque
 from serial import Serial
 
-from .misc import human_readable
+from .misc import human_readable, get_logger
+
+
+class Recorder:
+    def __init__(self, serial_connection, fp, log_file=None, verbose=True, 
+                 write_header=True):
+        self.ser = serial_connection
+        self.fp = fp
+        self.log_file = log_file or 'timer.log'
+        self.verbose = verbose
+        self.running = False
+        self.entries = []
+    
+        # Make sure the serial connection is in non-blocking mode
+        self.ser.timeout = 0
+
+        self.logger = get_logger(__name__, 
+                self.log_file,
+                log_level=logging.DEBUG if verbose else logging.INFO)
+
+        if not self.ser.is_open:
+            self.ser.open()
+
+        # Instantiate the csv writer and write the header (if desired)
+        self.writer = csv.writer(self.fp)
+
+        if write_header:
+            header = ['Timestamp', 'Millis', 'Laptime', 'Human Readable']
+            writer.writerow(header)
+
+    def get_millis(self):
+        buff = deque()
+        while self.running:
+            # Read in up to 8 bytes
+            stuff = self.ser.read(8)
+
+            if stuff:
+                self.logger.debug('Got: "{}"'.format(stuff))
+                buff.extend(stuff)
+                
+            if b'\n' in stuff:
+                next_char = buff.popleft()
+
+                message = bytearray()
+                while next_char != b'\n':
+                    message.append(next_char)
+                    next_char = buff.popleft()
+
+                yield message
+                    
 
 
 def record(serial_connection, fp, verbose=False):
